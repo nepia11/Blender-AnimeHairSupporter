@@ -7,9 +7,9 @@ class ahs_maincurve_hide(bpy.types.Operator):
     bl_label = "隠す"
     bl_description = "メインカーブをすべて隠す/表示"
     bl_options = {'REGISTER', 'UNDO'}
-    
+
     is_hide = bpy.props.BoolProperty(name="隠す")
-    
+
     @classmethod
     def poll(cls, context):
         try:
@@ -23,7 +23,7 @@ class ahs_maincurve_hide(bpy.types.Operator):
         except:
             return False
         return True
-    
+
     def execute(self, context):
         for ob in context.blend_data.objects:
             if ob.type != 'CURVE':

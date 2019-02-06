@@ -7,7 +7,7 @@ class ahs_maincurve_select(bpy.types.Operator):
     bl_label = "選択"
     bl_description = "メインカーブをすべて選択する"
     bl_options = {'REGISTER', 'UNDO'}
-    
+
     @classmethod
     def poll(cls, context):
         try:
@@ -21,7 +21,7 @@ class ahs_maincurve_select(bpy.types.Operator):
         except:
             return False
         return True
-    
+
     def execute(self, context):
         target_objects = []
         for ob in context.visible_objects:
@@ -31,7 +31,7 @@ class ahs_maincurve_select(bpy.types.Operator):
                 target_objects.append(ob)
         if not len(target_objects):
             return {'FINISHED'}
-        
+
         if context.active_object not in target_objects:
             target_objects.sort(key=lambda ob: ob.name)
             _common.set_active_object(target_objects[0])

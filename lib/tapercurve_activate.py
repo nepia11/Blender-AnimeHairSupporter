@@ -7,40 +7,40 @@ class ahs_tapercurve_activate(bpy.types.Operator):
     bl_label = "テーパー/ベベルをアクティブ化"
     bl_description = "テーパー/ベベルにアクティブを移す"
     bl_options = {'REGISTER', 'UNDO'}
-    
+
     items = [
         ('TAPER', "テーパー", "", 'CURVE_NCURVE', 1),
         ('BEVEL', "ベベル", "", 'SURFACE_NCIRCLE', 2),
     ]
     mode = bpy.props.EnumProperty(items=items, name="モード")
-    
+
     @classmethod
     def poll(cls, context):
         try:
             curve = _common.get_active_object().data
             if curve.taper_object and curve.bevel_object:
                 return True
-            
+
             taper_and_bevel_objects = [c.taper_object for c in context.blend_data.curves if c.taper_object] + [c.bevel_object for c in context.blend_data.curves if c.bevel_object]
             if _common.get_active_object() in taper_and_bevel_objects:
                 return True
         except:
             return False
         return True
-    
+
     def execute(self, context):
         ob = _common.get_active_object()
         curve = ob.data
-        
+
         if curve.taper_object and curve.bevel_object:
             if self.mode == 'TAPER':
                 target_ob = curve.taper_object
             elif self.mode == 'BEVEL':
                 target_ob = curve.bevel_object
-            
+
             if not target_ob:
                 return {'CANCELLED'}
-            
+
             for o in context.blend_data.objects:
                 o.select = False
             _common.select(target_ob, True)
@@ -59,10 +59,10 @@ class ahs_tapercurve_activate(bpy.types.Operator):
                     break
             if not target_ob:
                 return {'CANCELLED'}
-            
+
             for o in context.blend_data.objects:
                 _common.select(o, False)
             _common.select(target_ob, True)
             _common.set_active_object(target_ob)
-        
+
         return {'FINISHED'}

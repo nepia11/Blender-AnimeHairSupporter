@@ -7,14 +7,14 @@ class ahs_tapercurve_remove_alones(bpy.types.Operator):
     bl_label = "ぼっち駆除"
     bl_description = "どのカーブにも属していないテーパー/ベベルと思われるカーブを削除"
     bl_options = {'REGISTER', 'UNDO'}
-    
+
     items = [
         ('TAPER', "テーパー", "", 'CURVE_NCURVE', 1),
         ('BEVEL', "ベベル", "", 'SURFACE_NCIRCLE', 2),
         ('BOTH', "両方", "", 'ARROW_LEFTRIGHT', 3),
     ]
     mode = bpy.props.EnumProperty(items=items, name="モード", default='BOTH')
-    
+
     @classmethod
     def poll(cls, context):
         try:
@@ -35,7 +35,7 @@ class ahs_tapercurve_remove_alones(bpy.types.Operator):
         except:
             return False
         return True
-    
+
     def execute(self, context):
         if self.mode != 'BEVEL':
             taper_objects = []
@@ -48,7 +48,7 @@ class ahs_tapercurve_remove_alones(bpy.types.Operator):
                 name = re.sub(r'\.\d{3,}$', "", ob.name)
                 if re.search(r':Taper$', name) and ob not in taper_objects:
                     context.blend_data.curves.remove(ob.data, do_unlink=True)
-        
+
         if self.mode != 'TAPER':
             bevel_objects = []
             for ob in context.blend_data.objects:
@@ -60,7 +60,7 @@ class ahs_tapercurve_remove_alones(bpy.types.Operator):
                 name = re.sub(r'\.\d{3,}$', "", ob.name)
                 if re.search(r':Bevel$', name) and ob not in bevel_objects:
                     context.blend_data.curves.remove(ob.data, do_unlink=True)
-        
+
         for area in context.screen.areas:
             area.tag_redraw()
         return {'FINISHED'}

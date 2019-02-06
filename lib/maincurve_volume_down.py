@@ -6,7 +6,7 @@ class ahs_maincurve_volume_down(bpy.types.Operator):
     bl_label = "肉付けを削除"
     bl_description = "選択カーブの設定したテーパー/ベベルを削除"
     bl_options = {'REGISTER', 'UNDO'}
-    
+
     @classmethod
     def poll(cls, context):
         try:
@@ -20,7 +20,7 @@ class ahs_maincurve_volume_down(bpy.types.Operator):
         except:
             return False
         return True
-    
+
     def execute(self, context):
         for ob in context.selected_objects:
             if ob.type != 'CURVE':
@@ -29,7 +29,7 @@ class ahs_maincurve_volume_down(bpy.types.Operator):
                 context.blend_data.curves.remove(ob.data.taper_object.data, do_unlink=True)
             if ob.data.bevel_object:
                 context.blend_data.curves.remove(ob.data.bevel_object.data, do_unlink=True)
-        
+
         for area in context.screen.areas:
             area.tag_redraw()
         return {'FINISHED'}
