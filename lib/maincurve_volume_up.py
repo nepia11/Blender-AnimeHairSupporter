@@ -1,5 +1,9 @@
-import bpy, mathutils, math, os
+import bpy
+import mathutils
+import math
+import os
 from . import _common
+
 
 class ahs_maincurve_volume_up(bpy.types.Operator):
     bl_idname = 'object.ahs_maincurve_volume_up'
@@ -19,9 +23,12 @@ class ahs_maincurve_volume_up(bpy.types.Operator):
     def poll(cls, context):
         try:
             for ob in context.selected_objects:
-                if ob.type == 'CURVE': break
-            else: return False
-        except: return False
+                if ob.type == 'CURVE':
+                    break
+            else:
+                return False
+        except:
+            return False
         return True
     
     def draw(self, context):
@@ -41,20 +48,24 @@ class ahs_maincurve_volume_up(bpy.types.Operator):
         blend_path = _common.get_append_data_blend_path()
         
         for ob in context.selected_objects:
-            if ob in taper_and_bevel_objects: continue
-            if ob.type != 'CURVE': continue
+            if ob in taper_and_bevel_objects:
+                continue
+            if ob.type != 'CURVE':
+                continue
             
             curve = ob.data
             
             # すでにテーパーかベベルがあって参照が1つの場合は削除
             if curve.taper_object:
                 if len([c.taper_object for c in context.blend_data.curves if c.taper_object == curve.taper_object]) == 1:
-                    o, c = curve.taper_object, curve.taper_object.data
-                    if c: context.blend_data.curves.remove(c, do_unlink=True)
+                    c = curve.taper_object
+                    if c:
+                        context.blend_data.curves.remove(c, do_unlink=True)
             if curve.bevel_object:
                 if len([c.bevel_object for c in context.blend_data.curves if c.bevel_object == curve.bevel_object]) == 1:
-                    o, c = curve.bevel_object, curve.bevel_object.data
-                    if c: context.blend_data.curves.remove(c, do_unlink=True)
+                    c = curve.bevel_object
+                    if c:
+                        context.blend_data.curves.remove(c, do_unlink=True)
             
             # テーパーオブジェクトをアペンドして割り当て
             with context.blend_data.libraries.load(blend_path) as (data_from, data_to):

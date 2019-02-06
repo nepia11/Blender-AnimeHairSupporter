@@ -1,5 +1,7 @@
-import bpy, mathutils
+import bpy
+import mathutils
 from . import _common
+
 
 class OBJECT_OP_ahs_convert_curve_to_armature(bpy.types.Operator):
     bl_idname = 'object.ahs_convert_curve_to_armature'
@@ -17,9 +19,12 @@ class OBJECT_OP_ahs_convert_curve_to_armature(bpy.types.Operator):
         bone_points = []
         for ob in context.selected_objects:
             _common.select(ob, False)
-            if ob.type != 'CURVE': continue
-            if not len(ob.data.splines): continue
-            if len(ob.data.splines[0].points) < 2: continue
+            if ob.type != 'CURVE':
+                continue
+            if not len(ob.data.splines):
+                continue
+            if len(ob.data.splines[0].points) < 2:
+                continue
             
             pre_curve = ob.data
             temp_curve = pre_curve.copy()
@@ -31,12 +36,14 @@ class OBJECT_OP_ahs_convert_curve_to_armature(bpy.types.Operator):
             temp_curve.bevel_factor_end = 1
             temp_curve.taper_object = None
             temp_curve.bevel_object = None
-            for spline in temp_curve.splines: spline.resolution_u = 64
+            for spline in temp_curve.splines:
+                spline.resolution_u = 64
             
             curve_point_cos = [mathutils.Vector(p.co[:3]) for p in temp_curve.splines[0].points]
             curve_point_lengths = [0]
             for index, co in enumerate(curve_point_cos):
-                if index == 0: continue
+                if index == 0:
+                    continue
                 prev_co = curve_point_cos[index - 1]
                 curve_point_lengths.append((co - prev_co).length)
             total_curve_point_length = sum(curve_point_lengths)
@@ -50,7 +57,8 @@ class OBJECT_OP_ahs_convert_curve_to_armature(bpy.types.Operator):
             vert_cos = [ob.matrix_world * v.co for v in temp_me.vertices]
             vert_lengths = [0]
             for index, co in enumerate(vert_cos):
-                if index == 0: continue
+                if index == 0:
+                    continue
                 prev_co = vert_cos[index - 1]
                 vert_lengths.append((co - prev_co).length)
             total_vert_length = sum(vert_lengths)
@@ -58,7 +66,8 @@ class OBJECT_OP_ahs_convert_curve_to_armature(bpy.types.Operator):
             local_bone_points = [vert_cos[0].copy()]
             current_length = 0
             for ratio_index, ratio in enumerate(curve_point_ratios):
-                if ratio_index == 0: continue
+                if ratio_index == 0:
+                    continue
                 raw_bone_length = total_vert_length * ratio
                 bone_length = raw_bone_length / (self.bone_subdivide_count + 1)
                 
@@ -67,11 +76,13 @@ class OBJECT_OP_ahs_convert_curve_to_armature(bpy.types.Operator):
                     
                     current_vert_length = 0
                     for co_index, co in enumerate(vert_cos):
-                        if co_index == 0: continue
+                        if co_index == 0:
+                            continue
                         pre_co = vert_cos[co_index - 1]
                         current_vert_length += (co - pre_co).length
                         target_co = co.copy()
-                        if target_length <= current_vert_length: break
+                        if target_length <= current_vert_length:
+                            break
                     
                     local_bone_points.append(target_co)
                 
@@ -95,8 +106,9 @@ class OBJECT_OP_ahs_convert_curve_to_armature(bpy.types.Operator):
         for index, local_bone_points in enumerate(bone_points):
             prev_bone = None
             for point_index, point in enumerate(local_bone_points):
-                if point_index == 0: continue
-                new_bone = new_arm.edit_bones.new("Hair " + str(index+1) + "-" + str(point_index))
+                if point_index == 0:
+                    continue
+                new_bone = new_arm.edit_bones.new("Hair " + str(index + 1) + "-" + str(point_index))
                 new_bone.head = local_bone_points[point_index - 1].copy()
                 new_bone.tail = point.copy()
                 new_bone.parent = prev_bone

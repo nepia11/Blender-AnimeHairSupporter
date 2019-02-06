@@ -1,6 +1,7 @@
 import bpy
 from . import _common
 
+
 class ahs_maincurve_set_resolution(bpy.types.Operator):
     bl_idname = 'object.ahs_maincurve_set_resolution'
     bl_label = "解像度を変更"
@@ -12,29 +13,36 @@ class ahs_maincurve_set_resolution(bpy.types.Operator):
     items = [
         ('ABSOLUTE', "絶対", "", 'PREFERENCES', 1),
         ('RELATIVE', "相対", "", 'ZOOMIN', 2),
-        ]
+    ]
     mode = bpy.props.EnumProperty(items=items, name="モード", default='ABSOLUTE')
     
     @classmethod
     def poll(cls, context):
         try:
             for ob in context.selected_objects:
-                if ob.type != 'CURVE': continue
+                if ob.type != 'CURVE':
+                    continue
                 break
-            else: return False
-        except: return False
+            else:
+                return False
+        except:
+            return False
         return True
     
     def invoke(self, context, event):
         try:
             self.value = _common.get_active_object().data.splines.active.resolution_u
-        except: pass
+        except:
+            pass
         return self.execute(context)
     
     def execute(self, context):
         for ob in context.selected_objects:
-            if ob.type != 'CURVE': continue
+            if ob.type != 'CURVE':
+                continue
             for spline in ob.data.splines:
-                if self.mode == 'ABSOLUTE': spline.resolution_u = self.value
-                if self.mode == 'RELATIVE': spline.resolution_u += self.value
+                if self.mode == 'ABSOLUTE':
+                    spline.resolution_u = self.value
+                if self.mode == 'RELATIVE':
+                    spline.resolution_u += self.value
         return {'FINISHED'}

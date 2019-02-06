@@ -6,16 +6,16 @@ import bpy
 
 # アドオン情報
 bl_info = {
-    'name' : "Anime Hair Supporter",
-    'author' : "saidenka",
-    'version' : (1, 0, 1),
-    'blender' : (2, 80, 0),
-    'location' : "3Dビュー > オブジェクトモード > サイドバー > ツール > アニメ髪支援パネル",
-    'description' : "",
-    'warning' : "",
-    'wiki_url' : "https://github.com/saidenka/Blender-AnimeHairSupporter",
-    'tracker_url' : "https://github.com/saidenka/Blender-AnimeHairSupporter",
-    'category' : "Tools"
+    'name': "Anime Hair Supporter",
+    'author': "saidenka",
+    'version': (1, 0, 1),
+    'blender': (2, 80, 0),
+    'location': "3Dビュー > オブジェクトモード > サイドバー > ツール > アニメ髪支援パネル",
+    'description': "",
+    'warning': "",
+    'wiki_url': "https://github.com/saidenka/Blender-AnimeHairSupporter",
+    'tracker_url': "https://github.com/saidenka/Blender-AnimeHairSupporter",
+    'category': "Tools"
 }
 
 # サブスクリプト群をインポート
@@ -51,6 +51,7 @@ for name in module_names:
     else:
         namespace[name] = importlib.import_module(fullname)
 
+
 # パネルの設定
 class AHS_Props(bpy.types.PropertyGroup):
     maincurve_expand = bpy.props.BoolProperty(name="メインパネルを展開", default=True)
@@ -63,16 +64,19 @@ for module in module_names:
     for module_class in [obj for name, obj in inspect.getmembers(namespace[module]) if inspect.isclass(obj)]:
         classes.append(module_class)
 
+
 # プラグインをインストールしたときの処理
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
     bpy.types.Scene.ahs_props = bpy.props.PointerProperty(type=AHS_Props)
 
+
 # プラグインをアンインストールしたときの処理
 def unregister():
     from pathlib import Path
-    if bpy.context.scene.get('ahs_props'): del bpy.context.scene['ahs_props']
+    if bpy.context.scene.get('ahs_props'):
+        del bpy.context.scene['ahs_props']
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
     Path(__file__).touch()

@@ -1,5 +1,8 @@
-import bpy, bmesh, mathutils
+import bpy
+import bmesh
+import mathutils
 from . import _common
+
 
 class ahs_convert_edgemesh_to_curve(bpy.types.Operator):
     bl_idname = 'object.ahs_convert_edgemesh_to_curve'
@@ -13,7 +16,7 @@ class ahs_convert_edgemesh_to_curve(bpy.types.Operator):
     
     @classmethod
     def poll(cls, context):
-         return True
+        return True
     
     def draw(self, context):
         self.layout.prop(self, 'order_u', slider=True)
@@ -24,8 +27,10 @@ class ahs_convert_edgemesh_to_curve(bpy.types.Operator):
         new_objects = []
         for ob in context.selected_objects[:]:
             _common.select(ob, False)
-            if ob.type != 'MESH': continue
-            if len(ob.data.vertices) < 2 or len(ob.data.edges) < 1 or len(ob.data.polygons): continue
+            if ob.type != 'MESH':
+                continue
+            if len(ob.data.vertices) < 2 or len(ob.data.edges) < 1 or len(ob.data.polygons):
+                continue
             
             bm = bmesh.new()
             bm.from_mesh(ob.data)
@@ -38,17 +43,22 @@ class ahs_convert_edgemesh_to_curve(bpy.types.Operator):
                 current_vert, current_edge = None, None
                 for vert in bm.verts:
                     # 繋がってる辺が2つは開始地点として不適切
-                    if len(vert.link_edges) == 2: continue
+                    if len(vert.link_edges) == 2:
+                        continue
                     # まだ拾ってない辺を検索
                     for edge in vert.link_edges:
-                        if edge in already_edges: continue
+                        if edge in already_edges:
+                            continue
                         # 変数に確保して離脱
                         current_vert, current_edge = vert, edge
                         break
-                    if current_edge: break
+                    if current_edge:
+                        break
                 # 離脱
-                else: break
-                if not current_edge: break
+                else:
+                    break
+                if not current_edge:
+                    break
                 
                 # 辿っていく
                 local_verts = [current_vert]
@@ -60,14 +70,16 @@ class ahs_convert_edgemesh_to_curve(bpy.types.Operator):
                     # ローカル結果にアペンド
                     local_verts.append(current_vert)
                     # 離脱
-                    if len(current_vert.link_edges) != 2: break
+                    if len(current_vert.link_edges) != 2:
+                        break
                     # 2つある辺の次にあたるのを現在辺に
                     for edge in current_vert.link_edges:
                         if edge != current_edge:
                             current_edge = edge
                             break
                 # 離脱
-                else: break
+                else:
+                    break
                 # 結果をアペンド
                 separated_verts.append(local_verts)
             
@@ -76,7 +88,7 @@ class ahs_convert_edgemesh_to_curve(bpy.types.Operator):
                 
                 # グローバルZ軸が上の頂点を開始地点とする
                 begin_co = local_points[0]
-                end_co   = local_points[-1]
+                end_co = local_points[-1]
                 if begin_co.z < end_co.z:
                     local_verts.reverse(), local_points.reverse()
                 
@@ -111,7 +123,9 @@ class ahs_convert_edgemesh_to_curve(bpy.types.Operator):
                 context.blend_data.meshes.remove(ob.data, do_unlink=True)
         
         # 新規オブジェクトをアクティブ＆選択
-        if len(new_objects): _common.set_active_object(new_objects[0])
-        for new_object in new_objects: _common.select(new_object, True)
+        if len(new_objects):
+            _common.set_active_object(new_objects[0])
+        for new_object in new_objects:
+            _common.select(new_object, True)
         
         return {'FINISHED'}

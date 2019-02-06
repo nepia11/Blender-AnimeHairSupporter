@@ -1,4 +1,7 @@
-import bpy, math, mathutils
+import bpy
+import math
+import mathutils
+
 
 class ahs_maincurve_gradation_tilt(bpy.types.Operator):
     bl_idname = 'object.ahs_maincurve_gradation_tilt'
@@ -23,17 +26,20 @@ class ahs_maincurve_gradation_tilt(bpy.types.Operator):
     items = [
         ('ABSOLUTE', "絶対", "", 'PREFERENCES', 1),
         ('RELATIVE', "相対", "", 'ZOOMIN', 2),
-        ]
+    ]
     mode = bpy.props.EnumProperty(items=items, name="モード", default='ABSOLUTE')
     
     @classmethod
     def poll(cls, context):
         try:
             for ob in context.selected_objects:
-                if ob.type != 'CURVE': continue
+                if ob.type != 'CURVE':
+                    continue
                 break
-            else: return False
-        except: return False
+            else:
+                return False
+        except:
+            return False
         return True
     
     def draw(self, context):
@@ -72,20 +78,25 @@ class ahs_maincurve_gradation_tilt(bpy.types.Operator):
         begin_ratio, end_ratio = self.begin_ratio * 0.01, self.end_ratio * 0.01
         
         for ob in context.selected_objects:
-            if ob.type != 'CURVE': continue
+            if ob.type != 'CURVE':
+                continue
             curve = ob.data
-            if not len(curve.splines): continue
+            if not len(curve.splines):
+                continue
             
             for spline in curve.splines:
-                if len(spline.points) < 2: continue
+                if len(spline.points) < 2:
+                    continue
                 
                 total_length = 0.0
                 for index, point in enumerate(spline.points):
-                    if index == 0: continue
+                    if index == 0:
+                        continue
                     diff_co = mathutils.Vector(point.co[:3]) - mathutils.Vector(spline.points[index - 1].co[:3])
                     total_length += diff_co.length
                 
-                if total_length == 0.0: continue
+                if total_length == 0.0:
+                    continue
                 
                 current_length = 0.0
                 for index, point in enumerate(spline.points):
@@ -110,13 +121,19 @@ class ahs_maincurve_gradation_tilt(bpy.types.Operator):
                         current_weight_softbody = ((self.begin_weight_softbody * (1 - ratio)) + (self.end_weight_softbody * (ratio))) * 0.01
                     
                     if self.is_tilt:
-                        if   self.mode == 'ABSOLUTE': point.tilt = current_tilt
-                        elif self.mode == 'RELATIVE': point.tilt += current_tilt
+                        if self.mode == 'ABSOLUTE':
+                            point.tilt = current_tilt
+                        elif self.mode == 'RELATIVE':
+                            point.tilt += current_tilt
                     if self.is_radius:
-                        if   self.mode == 'ABSOLUTE': point.radius = current_radius
-                        elif self.mode == 'RELATIVE': point.radius += current_radius
+                        if self.mode == 'ABSOLUTE':
+                            point.radius = current_radius
+                        elif self.mode == 'RELATIVE':
+                            point.radius += current_radius
                     if self.is_weight_softbody:
-                        if   self.mode == 'ABSOLUTE': point.weight_softbody = current_weight_softbody
-                        elif self.mode == 'RELATIVE': point.weight_softbody += current_weight_softbody
+                        if self.mode == 'ABSOLUTE':
+                            point.weight_softbody = current_weight_softbody
+                        elif self.mode == 'RELATIVE':
+                            point.weight_softbody += current_weight_softbody
         
         return {'FINISHED'}

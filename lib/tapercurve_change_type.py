@@ -1,5 +1,7 @@
-import bpy, os
+import bpy
+import os
 from . import _common
+
 
 class ahs_tapercurve_change_type(bpy.types.Operator):
     bl_idname = 'object.ahs_tapercurve_change_type'
@@ -19,25 +21,34 @@ class ahs_tapercurve_change_type(bpy.types.Operator):
         try:
             taper_and_bevel_objects = [c.taper_object for c in context.blend_data.curves if c.taper_object] + [c.bevel_object for c in context.blend_data.curves if c.bevel_object]
             for ob in context.selected_objects:
-                if ob.type != 'CURVE': continue
-                if ob.data.taper_object or ob.data.bevel_object: break
-                if ob in taper_and_bevel_objects: break
-            else: return False
-        except: return False
+                if ob.type != 'CURVE':
+                    continue
+                if ob.data.taper_object or ob.data.bevel_object:
+                    break
+                if ob in taper_and_bevel_objects:
+                    break
+            else:
+                return False
+        except:
+            return False
         return True
     
     def draw(self, context):
         row = self.layout.row(align=True)
-        if self.is_taper: icon = 'FILE_TICK'
-        else: icon = 'BLANK1'
+        if self.is_taper:
+            icon = 'FILE_TICK'
+        else:
+            icon = 'BLANK1'
         row.prop(self, 'is_taper', text="", icon=icon, toggle=True)
         sub_row = row.row(align=True)
         sub_row.prop(self, 'taper_type')
         sub_row.enabled = self.is_taper
         
         row = self.layout.row(align=True)
-        if self.is_bevel: icon = 'FILE_TICK'
-        else: icon = 'BLANK1'
+        if self.is_bevel:
+            icon = 'FILE_TICK'
+        else:
+            icon = 'BLANK1'
         row.prop(self, 'is_bevel', text="", icon=icon, toggle=True)
         sub_row = row.row(align=True)
         sub_row.prop(self, 'bevel_type')
@@ -51,10 +62,13 @@ class ahs_tapercurve_change_type(bpy.types.Operator):
             target_objects = []
             taper_objects = [c.taper_object for c in context.blend_data.curves if c.taper_object]
             for ob in context.selected_objects:
-                if ob.type != 'CURVE': continue
+                if ob.type != 'CURVE':
+                    continue
                 
-                if ob.data.taper_object: target_objects.append(ob.data.taper_object)
-                elif ob in taper_objects: target_objects.append(ob)
+                if ob.data.taper_object:
+                    target_objects.append(ob.data.taper_object)
+                elif ob in taper_objects:
+                    target_objects.append(ob)
             
             for ob in target_objects:
                 pre_curve = ob.data
@@ -72,10 +86,13 @@ class ahs_tapercurve_change_type(bpy.types.Operator):
             target_objects = []
             bevel_objects = [c.bevel_object for c in context.blend_data.curves if c.bevel_object]
             for ob in context.selected_objects:
-                if ob.type != 'CURVE': continue
+                if ob.type != 'CURVE':
+                    continue
                 
-                if ob.data.bevel_object: target_objects.append(ob.data.bevel_object)
-                elif ob in bevel_objects: target_objects.append(ob)
+                if ob.data.bevel_object:
+                    target_objects.append(ob.data.bevel_object)
+                elif ob in bevel_objects:
+                    target_objects.append(ob)
             
             for ob in target_objects:
                 pre_curve = ob.data

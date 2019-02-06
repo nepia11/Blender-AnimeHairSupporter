@@ -1,5 +1,7 @@
-import bpy, mathutils
+import bpy
+import mathutils
 from . import _common
+
 
 class ahs_maincurve_activate(bpy.types.Operator):
     bl_idname = 'object.ahs_maincurve_activate'
@@ -11,8 +13,10 @@ class ahs_maincurve_activate(bpy.types.Operator):
     def poll(cls, context):
         try:
             taper_and_bevel_objects = [c.taper_object for c in context.blend_data.curves if c.taper_object] + [c.bevel_object for c in context.blend_data.curves if c.bevel_object]
-            if _common.get_active_object() not in taper_and_bevel_objects: return False
-        except: return False
+            if _common.get_active_object() not in taper_and_bevel_objects:
+                return False
+        except:
+            return False
         return True
     
     def execute(self, context):
@@ -20,11 +24,15 @@ class ahs_maincurve_activate(bpy.types.Operator):
         
         parent_objects = []
         for o in context.blend_data.objects:
-            if o.type != 'CURVE': continue
-            if o.data.taper_object == ob: parent_objects.append(o)
-            if o.data.bevel_object == ob: parent_objects.append(o)
+            if o.type != 'CURVE':
+                continue
+            if o.data.taper_object == ob:
+                parent_objects.append(o)
+            if o.data.bevel_object == ob:
+                parent_objects.append(o)
         
-        for o in context.blend_data.objects: o.select = False
+        for o in context.blend_data.objects:
+            o.select = False
         
         def get_center(ob):
             total_co = mathutils.Vector()

@@ -1,4 +1,6 @@
-import bpy, mathutils
+import bpy
+import mathutils
+
 
 class ahs_maincurve_extra_deform(bpy.types.Operator):
     bl_idname = 'object.ahs_maincurve_extra_deform'
@@ -13,10 +15,13 @@ class ahs_maincurve_extra_deform(bpy.types.Operator):
     def poll(cls, context):
         try:
             for ob in context.selected_objects:
-                if ob.type != 'CURVE': continue
+                if ob.type != 'CURVE':
+                    continue
                 break
-            else: return False
-        except: return False
+            else:
+                return False
+        except:
+            return False
         return True
     
     def draw(self, context):
@@ -25,16 +30,20 @@ class ahs_maincurve_extra_deform(bpy.types.Operator):
     
     def execute(self, context):
         for ob in context.selected_objects:
-            if ob.type != 'CURVE': continue
+            if ob.type != 'CURVE':
+                continue
             
             curve = ob.data
-            if not curve.splines.active: continue
+            if not curve.splines.active:
+                continue
             
             for spline in curve.splines:
                 spline.order_u = self.order_u
-                if len(spline.points) < 3: continue
+                if len(spline.points) < 3:
+                    continue
                 for index, point in enumerate(spline.points):
-                    if index == 0 or len(spline.points) - 1 == index: continue
+                    if index == 0 or len(spline.points) - 1 == index:
+                        continue
                     
                     co = mathutils.Vector(point.co[:3])
                     prev_line = co - mathutils.Vector(spline.points[index - 1].co[:3])

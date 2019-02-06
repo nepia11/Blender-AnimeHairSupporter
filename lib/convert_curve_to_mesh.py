@@ -1,5 +1,8 @@
-import bpy, bmesh, mathutils
+import bpy
+import bmesh
+import mathutils
 from . import _common
+
 
 class ahs_convert_curve_to_mesh(bpy.types.Operator):
     bl_idname = 'object.ahs_convert_curve_to_mesh'
@@ -39,7 +42,8 @@ class ahs_convert_curve_to_mesh(bpy.types.Operator):
                 _common.select(ob, False)
                 continue
             target_objects.append(ob)
-        if not len(target_objects): return {'CANCELLED'}
+        if not len(target_objects):
+            return {'CANCELLED'}
         
         # テーパー/ベベルオブジェクトを保管
         taper_and_bevel_objects = []
@@ -122,7 +126,8 @@ class ahs_convert_curve_to_mesh(bpy.types.Operator):
         _common.set_active_object(sorted(target_objects, key=lambda o: o.name)[0])
         
         # 公式のオブジェクト統合
-        if self.is_join: bpy.ops.object.join()
+        if self.is_join:
+            bpy.ops.object.join()
         
         # UVの島を梱包
         if self.is_uv_pack_islands and self.is_join:
