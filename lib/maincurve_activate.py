@@ -1,4 +1,5 @@
 import bpy, mathutils
+from . import _common
 
 class ahs_maincurve_activate(bpy.types.Operator):
 	bl_idname = 'object.ahs_maincurve_activate'
@@ -10,12 +11,12 @@ class ahs_maincurve_activate(bpy.types.Operator):
 	def poll(cls, context):
 		try:
 			taper_and_bevel_objects = [c.taper_object for c in context.blend_data.curves if c.taper_object] + [c.bevel_object for c in context.blend_data.curves if c.bevel_object]
-			if context.active_object not in taper_and_bevel_objects: return False
+			if _common.get_active_object() not in taper_and_bevel_objects: return False
 		except: return False
 		return True
 	
 	def execute(self, context):
-		ob = context.active_object
+		ob = _common.get_active_object()
 		
 		parent_objects = []
 		for o in context.blend_data.objects:
@@ -33,11 +34,12 @@ class ahs_maincurve_activate(bpy.types.Operator):
 		
 		nearest_length = 9**9
 		for target_ob in parent_objects:
-			target_ob.select, target_ob.hide = True, False
+			_common.select(target_ob, True)
+			_common.set_hide(target_ob, False)
 			
 			length = (ob.location - get_center(target_ob)).length
 			if length < nearest_length:
 				nearest_length = length
-				context.scene.objects.active = target_ob
+				_common.set_active_object(target_ob)
 		
 		return {'FINISHED'}

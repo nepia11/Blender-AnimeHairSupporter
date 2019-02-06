@@ -1,6 +1,7 @@
 import bpy, mathutils
+from . import _common
 
-class ahs_convert_curve_to_armature(bpy.types.Operator):
+class OBJECT_OP_ahs_convert_curve_to_armature(bpy.types.Operator):
 	bl_idname = 'object.ahs_convert_curve_to_armature'
 	bl_label = "カーブ > アーマチュア"
 	bl_description = "選択中のカーブにそった新規アーマチュアを作成"
@@ -15,7 +16,7 @@ class ahs_convert_curve_to_armature(bpy.types.Operator):
 	def execute(self, context):
 		bone_points = []
 		for ob in context.selected_objects:
-			ob.select = False
+			_common.select(ob, False)
 			if ob.type != 'CURVE': continue
 			if not len(ob.data.splines): continue
 			if len(ob.data.splines[0].points) < 2: continue
@@ -83,9 +84,9 @@ class ahs_convert_curve_to_armature(bpy.types.Operator):
 		new_arm = context.blend_data.armatures.new("Armature")
 		new_ob = context.blend_data.objects.new("Armature", new_arm)
 		new_ob.data = new_arm
-		context.scene.objects.link(new_ob)
-		new_ob.select = True
-		context.scene.objects.active = new_ob
+		_common.link_to_scene(new_ob)
+		_common.select(new_ob, True)
+		_common.set_active_object(new_ob)
 		new_ob.show_x_ray = True
 		new_arm.draw_type = 'STICK'
 		

@@ -61,7 +61,7 @@ class ahs_tapercurve_id_singlize(bpy.types.Operator):
 				else:
 					new_ob, new_curve = ob.copy(), ob.data.copy()
 					new_ob.data = new_curve
-					context.scene.objects.link(new_ob)
+					_common.link_to_scene(new_ob)
 				
 				if is_tapers[ob]: parent.data.taper_object = new_ob
 				else            : parent.data.bevel_object = new_ob

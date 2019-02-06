@@ -1,4 +1,5 @@
 import bpy
+from . import _common
 
 class ahs_maincurve_hide(bpy.types.Operator):
 	bl_idname = 'object.ahs_maincurve_hide'
@@ -22,5 +23,5 @@ class ahs_maincurve_hide(bpy.types.Operator):
 		for ob in context.blend_data.objects:
 			if ob.type != 'CURVE': continue
 			if ob.data.taper_object and ob.data.bevel_object:
-				ob.hide = self.is_hide
+				_common.set_hide(ob, self.is_hide)
 		return {'FINISHED'}

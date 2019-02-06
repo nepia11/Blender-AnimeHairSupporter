@@ -1,4 +1,5 @@
 import bpy, bmesh, mathutils
+from . import _common
 
 class ahs_convert_curve_to_mesh(bpy.types.Operator):
 	bl_idname = 'object.ahs_convert_curve_to_mesh'
@@ -32,10 +33,10 @@ class ahs_convert_curve_to_mesh(bpy.types.Operator):
 		target_objects = []
 		for ob in context.selected_objects:
 			if ob.type != 'CURVE':
-				ob.select = False
+				_common.select(ob, False)
 				continue
 			if not ob.data.taper_object or not ob.data.bevel_object:
-				ob.select = False
+				_common.select(ob, False)
 				continue
 			target_objects.append(ob)
 		if not len(target_objects): return {'CANCELLED'}
@@ -53,7 +54,7 @@ class ahs_convert_curve_to_mesh(bpy.types.Operator):
 		x_list, y_list, z_list = [], [], []
 		for ob in target_objects:
 			for co_tuple in ob.bound_box:
-				co = ob.matrix_world * mathutils.Vector(co_tuple)
+				co = _common.mul(ob.matrix_world, mathutils.Vector(co_tuple))
 				x_list.append(co.x), y_list.append(co.y), z_list.append(co.z)
 		x_center, y_center, z_center = (min(x_list) + max(x_list)) / 2, (min(y_list) + max(y_list)) / 2, (min(z_list) + max(z_list)) / 2
 		objects_center = mathutils.Vector((x_center, y_center, z_center))
@@ -61,7 +62,7 @@ class ahs_convert_curve_to_mesh(bpy.types.Operator):
 		# 変換されたメッシュを順に処理
 		for ob in target_objects:
 			# 事前処理
-			context.scene.objects.active = ob
+			_common.set_active_object(ob)
 			bpy.ops.object.mode_set(mode='EDIT')
 			bpy.ops.mesh.select_all(action='DESELECT')
 			
@@ -81,7 +82,7 @@ class ahs_convert_curve_to_mesh(bpy.types.Operator):
 			bpy.ops.mesh.select_all(action='DESELECT')
 			
 			# シームを入れるべき辺ループに繋がってる頂点を検索
-			verts_distance = [((ob.matrix_world * v.co) - objects_center).length for v in selected_verts]
+			verts_distance = [(_common.mul(ob.matrix_world, v.co) - objects_center).length for v in selected_verts]
 			verts_density = []
 			for vert in selected_verts:
 				lengths = [e.calc_length() for e in vert.link_edges]
@@ -118,7 +119,7 @@ class ahs_convert_curve_to_mesh(bpy.types.Operator):
 			bpy.ops.object.mode_set(mode='OBJECT')
 		
 		# 名前順で一番前のオブジェクトをアクティブ化
-		context.scene.objects.active = sorted(target_objects, key=lambda o: o.name)[0]
+		_common.set_active_object(sorted(target_objects, key=lambda o: o.name)[0])
 		
 		# 公式のオブジェクト統合
 		if self.is_join: bpy.ops.object.join()
@@ -134,7 +135,6 @@ class ahs_convert_curve_to_mesh(bpy.types.Operator):
 		# 必要なくなったテーパー/ベベルを完全削除
 		for ob in taper_and_bevel_objects:
 			context.blend_data.curves.remove(ob.data, do_unlink=True)
-			context.blend_data.objects.remove(ob, do_unlink=True)
 		
 		context.tool_settings.mesh_select_mode = pre_mesh_select_mode
 		return {'FINISHED'}

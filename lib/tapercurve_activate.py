@@ -1,4 +1,5 @@
 import bpy
+from . import _common
 
 class ahs_tapercurve_activate(bpy.types.Operator):
 	bl_idname = 'object.ahs_tapercurve_activate'
@@ -15,16 +16,17 @@ class ahs_tapercurve_activate(bpy.types.Operator):
 	@classmethod
 	def poll(cls, context):
 		try:
-			curve = context.active_object.data
+			curve = _common.get_active_object().data
 			if curve.taper_object and curve.bevel_object: return True
 			
 			taper_and_bevel_objects = [c.taper_object for c in context.blend_data.curves if c.taper_object] + [c.bevel_object for c in context.blend_data.curves if c.bevel_object]
-			if context.active_object in taper_and_bevel_objects: return True
+			if _common.get_active_object() in taper_and_bevel_objects: return True
 		except: return False
 		return True
 	
 	def execute(self, context):
-		ob, curve = context.active_object, context.active_object.data
+		ob = _common.get_active_object()
+		curve = ob.data
 		
 		if curve.taper_object and curve.bevel_object:
 			if   self.mode == 'TAPER': target_ob = curve.taper_object
@@ -33,8 +35,9 @@ class ahs_tapercurve_activate(bpy.types.Operator):
 			if not target_ob: return {'CANCELLED'}
 			
 			for o in context.blend_data.objects: o.select = False
-			target_ob.select, target_ob.hide = True, False
-			context.scene.objects.active = target_ob
+			_common.select(target_ob, True)
+			_common.set_hide(target_ob, False)
+			_common.set_active_object(target_ob)
 		else:
 			target_ob = None
 			for o in context.blend_data.objects:
@@ -47,8 +50,8 @@ class ahs_tapercurve_activate(bpy.types.Operator):
 					break
 			if not target_ob: return {'CANCELLED'}
 			
-			for o in context.blend_data.objects: o.select = False
-			target_ob.select = True
-			context.scene.objects.active = target_ob
+			for o in context.blend_data.objects: _common.select(o, False)
+			_common.select(target_ob, True)
+			_common.set_active_object(target_ob)
 		
 		return {'FINISHED'}

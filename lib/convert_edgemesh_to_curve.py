@@ -1,4 +1,5 @@
 import bpy, bmesh, mathutils
+from . import _common
 
 class ahs_convert_edgemesh_to_curve(bpy.types.Operator):
 	bl_idname = 'object.ahs_convert_edgemesh_to_curve'
@@ -22,7 +23,7 @@ class ahs_convert_edgemesh_to_curve(bpy.types.Operator):
 	def execute(self, context):
 		new_objects = []
 		for ob in context.selected_objects[:]:
-			ob.select = False
+			_common.select(ob, False)
 			if ob.type != 'MESH': continue
 			if len(ob.data.vertices) < 2 or len(ob.data.edges) < 1 or len(ob.data.polygons): continue
 			
@@ -71,7 +72,7 @@ class ahs_convert_edgemesh_to_curve(bpy.types.Operator):
 				separated_verts.append(local_verts)
 			
 			for local_verts in separated_verts:
-				local_points = [ob.matrix_world * v.co for v in local_verts]
+				local_points = [_common.mul(ob.matrix_world, v.co) for v in local_verts]
 				
 				# グローバルZ軸が上の頂点を開始地点とする
 				begin_co = local_points[0]
@@ -84,7 +85,7 @@ class ahs_convert_edgemesh_to_curve(bpy.types.Operator):
 				curve = context.blend_data.curves.new(name, 'CURVE')
 				curve_ob = context.blend_data.objects.new(name, curve)
 				curve_ob.matrix_world = mathutils.Matrix.Translation(local_points[0])
-				context.scene.objects.link(curve_ob)
+				_common.link_to_scene(curve_ob)
 				new_objects.append(curve_ob)
 				
 				# カーブの設定
@@ -98,7 +99,7 @@ class ahs_convert_edgemesh_to_curve(bpy.types.Operator):
 						prev_line = co - local_points[index - 1]
 						next_line = co - local_points[index + 1]
 						co += prev_line.lerp(next_line, 0.5) * (self.extra_deform_multi * 0.01)
-					point.co = list(curve_ob.matrix_world.inverted() * co) + [1.0]
+					point.co = list(_common.mul(curve_ob.matrix_world.inverted(), co)) + [1.0]
 				
 				# スプラインの設定
 				spline.order_u = self.order_u
@@ -108,10 +109,9 @@ class ahs_convert_edgemesh_to_curve(bpy.types.Operator):
 			
 			if self.is_remove_mesh:
 				context.blend_data.meshes.remove(ob.data, do_unlink=True)
-				context.blend_data.objects.remove(ob, do_unlink=True)
 		
 		# 新規オブジェクトをアクティブ＆選択
-		if len(new_objects): context.scene.objects.active = new_objects[0]
-		for new_object in new_objects: new_object.select = True
+		if len(new_objects): _common.set_active_object(new_objects[0])
+		for new_object in new_objects: _common.select(new_object, True)
 		
 		return {'FINISHED'}

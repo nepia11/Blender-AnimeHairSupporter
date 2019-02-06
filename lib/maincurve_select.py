@@ -1,4 +1,5 @@
 import bpy
+from . import _common
 
 class ahs_maincurve_select(bpy.types.Operator):
 	bl_idname = 'object.ahs_maincurve_select'
@@ -26,6 +27,6 @@ class ahs_maincurve_select(bpy.types.Operator):
 		
 		if context.active_object not in target_objects:
 			target_objects.sort(key=lambda ob: ob.name)
-			context.scene.objects.active = target_objects[0]
-		for ob in target_objects: ob.select = True
+			_common.set_active_object(target_objects[0])
+		for ob in target_objects: _common.select(ob, True)
 		return {'FINISHED'}

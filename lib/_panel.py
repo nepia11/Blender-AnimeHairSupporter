@@ -1,8 +1,9 @@
 import bpy
+from . import _common
 
 class VIEW3D_PT_tools_anime_hair_supporter(bpy.types.Panel):
 	bl_space_type = 'VIEW_3D'
-	bl_region_type = 'TOOLS'
+	bl_region_type = _common.region()
 	bl_category = 'Tools'
 	bl_context = 'objectmode'
 	bl_label = "アニメ髪支援"
@@ -21,13 +22,12 @@ class VIEW3D_PT_tools_anime_hair_supporter(bpy.types.Panel):
 		row.enabled = bool( len([o for o in context.selected_objects if o.type == 'CURVE']) )
 		
 		
-		
 		# メインカーブ
 		box = self.layout.box()
 		row = box.row(align=True)
-		row.prop(props, 'maincurve_expand', text="メインカーブ", icon='MAN_ROT', emboss=False)
+		row.prop(props, 'maincurve_expand', text="メインカーブ", icon='MOD_CURVE', emboss=False)
 		row.operator('object.ahs_maincurve_activate', text="", icon='ZOOM_SELECTED')
-		row.label("", icon='BLANK1')
+		row.label(text="", icon='BLANK1')
 		
 		if props.maincurve_expand:
 			
@@ -76,7 +76,7 @@ class VIEW3D_PT_tools_anime_hair_supporter(bpy.types.Panel):
 		if props.tapercurve_expand:
 		
 			# 種類を変更とか
-			row = box.split(percentage=0.6, align=False)
+			row = _common.box_split(box, 0.6, False)
 			op = row.operator('object.ahs_tapercurve_change_type', icon='HAND')
 			op.is_taper, op.is_bevel = True, False
 			op = row.operator('object.ahs_tapercurve_mirror', icon='MOD_MIRROR')
@@ -124,7 +124,7 @@ class VIEW3D_PT_tools_anime_hair_supporter(bpy.types.Panel):
 		if props.bevelcurve_expand:
 		
 			# 種類を変更とか
-			row = box.split(percentage=0.6, align=False)
+			row = _common.box_split(box, 0.6, False)
 			op = row.operator('object.ahs_tapercurve_change_type', icon='HAND')
 			op.is_taper, op.is_bevel = False, True
 			op = row.operator('object.ahs_tapercurve_mirror', icon='MOD_MIRROR')
