@@ -49,12 +49,12 @@ class OBJECT_OP_ahs_convert_curve_to_armature(bpy.types.Operator):
             total_curve_point_length = sum(curve_point_lengths)
             curve_point_ratios = [l / total_curve_point_length for l in curve_point_lengths]
 
-            temp_me = ob.to_mesh(context.scene, False, 'PREVIEW')
+            temp_me = ob.to_mesh(context.scene, False, 'PREVIEW') if _common.IS_LEGACY else ob.to_mesh(context.depsgraph, False)
 
             ob.data = pre_curve
             context.blend_data.curves.remove(temp_curve, do_unlink=True)
 
-            vert_cos = [ob.matrix_world * v.co for v in temp_me.vertices]
+            vert_cos = [_common.mul(ob.matrix_world, v.co) for v in temp_me.vertices]
             vert_lengths = [0]
             for index, co in enumerate(vert_cos):
                 if index == 0:
@@ -98,8 +98,12 @@ class OBJECT_OP_ahs_convert_curve_to_armature(bpy.types.Operator):
         _common.link_to_scene(new_ob)
         _common.select(new_ob, True)
         _common.set_active_object(new_ob)
-        new_ob.show_x_ray = True
-        new_arm.draw_type = 'STICK'
+        if _common.IS_LEGACY:
+            new_ob.show_x_ray = True
+            new_arm.draw_type = 'STICK'
+        else:
+            new_ob.show_in_front = True
+            new_arm.display_type = 'STICK'
 
         bpy.ops.object.mode_set(mode='EDIT')
 
