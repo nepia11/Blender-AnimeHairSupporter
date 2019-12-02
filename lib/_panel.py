@@ -45,8 +45,8 @@ class VIEW3D_PT_tools_anime_hair_supporter(bpy.types.Panel):
             column = box.column(align=True)
             row = column.row(align=True)
             row.operator('object.ahs_maincurve_select', icon='RESTRICT_SELECT_OFF')
-            row.operator('object.ahs_maincurve_hide', text="表示", icon='VISIBLE_IPO_ON').is_hide = False
-            row.operator('object.ahs_maincurve_hide', text="隠す", icon='VISIBLE_IPO_OFF').is_hide = True
+            row.operator('object.ahs_maincurve_hide', text="表示", icon='NONE').is_hide = False
+            row.operator('object.ahs_maincurve_hide', text="隠す", icon='NONE').is_hide = True
 
             # 解像度
             row = column.row(align=True)
@@ -96,9 +96,9 @@ class VIEW3D_PT_tools_anime_hair_supporter(bpy.types.Panel):
             column = box.column(align=True)
             row = column.row(align=True)
             row.operator('object.ahs_tapercurve_select', icon='RESTRICT_SELECT_OFF').mode = 'TAPER'
-            op = row.operator('object.ahs_tapercurve_hide', text="表示", icon='VISIBLE_IPO_ON')
+            op = row.operator('object.ahs_tapercurve_hide', text="表示", icon='NONE')
             op.mode, op.is_hide = 'TAPER', False
-            op = row.operator('object.ahs_tapercurve_hide', text="隠す", icon='VISIBLE_IPO_OFF')
+            op = row.operator('object.ahs_tapercurve_hide', text="隠す", icon='NONE')
             op.mode, op.is_hide = 'TAPER', True
 
             # 解像度
@@ -145,9 +145,9 @@ class VIEW3D_PT_tools_anime_hair_supporter(bpy.types.Panel):
             column = box.column(align=True)
             row = column.row(align=True)
             row.operator('object.ahs_tapercurve_select', icon='RESTRICT_SELECT_OFF').mode = 'BEVEL'
-            op = row.operator('object.ahs_tapercurve_hide', text="表示", icon='VISIBLE_IPO_ON')
+            op = row.operator('object.ahs_tapercurve_hide', text="表示", icon='NONE')
             op.mode, op.is_hide = 'BEVEL', False
-            op = row.operator('object.ahs_tapercurve_hide', text="隠す", icon='VISIBLE_IPO_OFF')
+            op = row.operator('object.ahs_tapercurve_hide', text="隠す", icon='NONE')
             op.mode, op.is_hide = 'BEVEL', True
 
             # 解像度
