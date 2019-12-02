@@ -23,8 +23,11 @@ class OBJECT_OP_ahs_convert_curve_to_armature(bpy.types.Operator):
                 continue
             if not len(ob.data.splines):
                 continue
-            if len(ob.data.splines[0].points) < 2:
-                continue
+            points = ob.data.splines[0].points
+            if len(points) < 2:
+                points = ob.data.splines[0].bezier_points
+                if len(points) < 2:
+                    continue
 
             pre_curve = ob.data
             temp_curve = pre_curve.copy()
@@ -39,7 +42,7 @@ class OBJECT_OP_ahs_convert_curve_to_armature(bpy.types.Operator):
             for spline in temp_curve.splines:
                 spline.resolution_u = 64
 
-            curve_point_cos = [mathutils.Vector(p.co[:3]) for p in temp_curve.splines[0].points]
+            curve_point_cos = [mathutils.Vector(p.co[:3]) for p in points]
             curve_point_lengths = [0]
             for index, co in enumerate(curve_point_cos):
                 if index == 0:
@@ -49,7 +52,7 @@ class OBJECT_OP_ahs_convert_curve_to_armature(bpy.types.Operator):
             total_curve_point_length = sum(curve_point_lengths)
             curve_point_ratios = [l / total_curve_point_length for l in curve_point_lengths]
 
-            temp_me = ob.to_mesh(context.scene, False, 'PREVIEW') if _common.IS_LEGACY else ob.to_mesh(context.depsgraph, False)
+            temp_me = ob.to_mesh(context.scene, False, 'PREVIEW') if _common.IS_LEGACY else ob.to_mesh(preserve_all_data_layers=False, depsgraph=context.evaluated_depsgraph_get())
 
             ob.data = pre_curve
             context.blend_data.curves.remove(temp_curve, do_unlink=True)
@@ -88,7 +91,10 @@ class OBJECT_OP_ahs_convert_curve_to_armature(bpy.types.Operator):
 
                 current_length += raw_bone_length
 
-            context.blend_data.meshes.remove(temp_me, do_unlink=True)
+            if _common.IS_LEGACY:
+                context.blend_data.meshes.remove(temp_me, do_unlink=True)
+            else:
+                ob.to_mesh_clear()
 
             bone_points.append(local_bone_points)
 
