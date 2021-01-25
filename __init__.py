@@ -58,10 +58,12 @@ class AHS_Props(bpy.types.PropertyGroup):
     tapercurve_expand = bpy.props.BoolProperty(name="テーパーパネルを展開", default=True)
     bevelcurve_expand = bpy.props.BoolProperty(name="ベベルパネルを展開", default=True)
 
+
 # モジュールからクラスの取得
 classes = [AHS_Props]
 for module in module_names:
-    for module_class in [obj for name, obj in inspect.getmembers(namespace[module]) if inspect.isclass(obj)]:
+    for module_class in [obj for name, obj in inspect.getmembers(
+            namespace[module]) if inspect.isclass(obj)]:
         classes.append(module_class)
 
 
@@ -80,6 +82,7 @@ def unregister():
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
     Path(__file__).touch()
+
 
 # 最初に実行される
 if __name__ == '__main__':
