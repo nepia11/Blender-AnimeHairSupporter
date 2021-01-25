@@ -77,6 +77,8 @@ class ahs_maincurve_volume_up(bpy.types.Operator):
             _common.link_to_scene(taper_curve_ob)
             _common.select(taper_curve_ob, False)
             curve.taper_object = taper_curve_ob
+            # add bevel_mode
+            curve.bevel_mode = "OBJECT"
 
             # ベベルオブジェクトをアペンドして割り当て
             with context.blend_data.libraries.load(blend_path) as (data_from, data_to):
