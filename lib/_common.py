@@ -74,6 +74,7 @@ def relocation_taper_and_bevel(main_ob, sub_ob, is_taper):
             else:
                 sub_ob.rotation_quaternion = mul(sub_ob.rotation_quaternion, mathutils.Quaternion((0, 0, 1), rotation_z - math.radians(90)))
 
+
 IS_LEGACY = (bpy.app.version < (2, 80, 0))
 
 

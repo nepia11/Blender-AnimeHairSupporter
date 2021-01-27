@@ -20,7 +20,7 @@ class ahs_tapercurve_activate(bpy.types.Operator):
             curve = _common.get_active_object().data
             if curve.taper_object and curve.bevel_object:
                 return True
-
+            # poll内でリスト作ると重そう
             taper_and_bevel_objects = [c.taper_object for c in context.blend_data.curves if c.taper_object] + [c.bevel_object for c in context.blend_data.curves if c.bevel_object]
             if _common.get_active_object() in taper_and_bevel_objects:
                 return True
@@ -42,7 +42,7 @@ class ahs_tapercurve_activate(bpy.types.Operator):
                 return {'CANCELLED'}
 
             for o in context.blend_data.objects:
-                o.select_set(False)
+                _common.select(o, False)
             _common.select(target_ob, True)
             _common.set_hide(target_ob, False)
             _common.set_active_object(target_ob)

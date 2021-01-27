@@ -12,6 +12,7 @@ class ahs_maincurve_activate(bpy.types.Operator):
     @classmethod
     def poll(cls, context):
         try:
+            # poll内でリスト作ると重そう
             taper_and_bevel_objects = [c.taper_object for c in context.blend_data.curves if c.taper_object] + [c.bevel_object for c in context.blend_data.curves if c.bevel_object]
             if _common.get_active_object() not in taper_and_bevel_objects:
                 return False
@@ -32,7 +33,7 @@ class ahs_maincurve_activate(bpy.types.Operator):
                 parent_objects.append(o)
 
         for o in context.blend_data.objects:
-            o.select_set(False)
+            _common.select(o, False)
 
         def get_center(ob):
             total_co = mathutils.Vector()

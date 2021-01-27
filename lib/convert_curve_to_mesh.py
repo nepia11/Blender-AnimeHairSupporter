@@ -75,7 +75,7 @@ class ahs_convert_curve_to_mesh(bpy.types.Operator):
             # 真ん中あたりの面 > ループ > 辺と辿って選択
             bm.faces.ensure_lookup_table()
             center_face = bm.faces[int(len(bm.faces) * 0.5)]
-            center_face.loops[1].edge.select_set(True)
+            _common.select(center_face.loops[1].edge, True)
 
             # 辺ループ選択
             bpy.ops.mesh.loop_multi_select(ring=False)
@@ -104,7 +104,7 @@ class ahs_convert_curve_to_mesh(bpy.types.Operator):
             # 1頂点選択状態から辺ループ選択してシームを入れる
             for edge in best_vert.link_edges:
                 if edge not in selected_edges:
-                    edge.select_set(True)
+                    _common.select(edge, True)
             bpy.ops.mesh.loop_multi_select(ring=False)
             bpy.ops.mesh.mark_seam(clear=False)
 
