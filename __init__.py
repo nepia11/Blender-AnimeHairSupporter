@@ -8,8 +8,8 @@ import bpy
 bl_info = {
     'name': "Anime Hair Supporter",
     'author': "saidenka, Taremin",
-    'version': (1, 0, 2),
-    'blender': (2, 91, 0),
+    'version': (1, 0, 3),
+    'blender': (2, 80, 0),
     'location': "3Dビュー > オブジェクトモード > サイドバー > ツール > アニメ髪支援パネル",
     'description': "",
     'warning': "",
