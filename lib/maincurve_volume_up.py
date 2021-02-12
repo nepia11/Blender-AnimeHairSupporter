@@ -67,6 +67,9 @@ class ahs_maincurve_volume_up(bpy.types.Operator):
                     if c:
                         context.blend_data.curves.remove(bpy.data.curves[c.name], do_unlink=True)
 
+            if hasattr(curve, "bevel_mode"):
+                curve.bevel_mode = "OBJECT"
+
             # テーパーオブジェクトをアペンドして割り当て
             with context.blend_data.libraries.load(blend_path) as (data_from, data_to):
                 data_to.objects = ["Taper." + self.taper_type]
