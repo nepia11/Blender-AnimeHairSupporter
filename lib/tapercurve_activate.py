@@ -21,7 +21,8 @@ class ahs_tapercurve_activate(bpy.types.Operator):
             if curve.taper_object and curve.bevel_object:
                 return True
 
-            taper_and_bevel_objects = [c.taper_object for c in context.blend_data.curves if c.taper_object] + [c.bevel_object for c in context.blend_data.curves if c.bevel_object]
+            taper_and_bevel_objects = [c.taper_object for c in context.blend_data.curves if c.taper_object] + [
+                c.bevel_object for c in context.blend_data.curves if c.bevel_object]
             if _common.get_active_object() in taper_and_bevel_objects:
                 return True
         except:
@@ -33,6 +34,7 @@ class ahs_tapercurve_activate(bpy.types.Operator):
         curve = ob.data
 
         if curve.taper_object and curve.bevel_object:
+            target_ob = None
             if self.mode == 'TAPER':
                 target_ob = curve.taper_object
             elif self.mode == 'BEVEL':
