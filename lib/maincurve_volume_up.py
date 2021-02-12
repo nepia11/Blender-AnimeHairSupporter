@@ -1,7 +1,7 @@
 import bpy
-import mathutils
-import math
-import os
+# import mathutils
+# import math
+# import os
 from . import _common
 
 
@@ -11,24 +11,30 @@ class ahs_maincurve_volume_up(bpy.types.Operator):
     bl_description = "選択中のカーブにテーパー/ベベルを設定して実体化する"
     bl_options = {'REGISTER', 'UNDO'}
 
-    taper_type = bpy.props.EnumProperty(items=_common.get_taper_enum_items(), name="テーパー", default='Tapered')
+    taper_type = bpy.props.EnumProperty(
+        items=_common.get_taper_enum_items(), name="テーパー", default='Tapered')
 
-    bevel_type = bpy.props.EnumProperty(items=_common.get_bevel_enum_items(), name="ベベル", default='Sharp')
-    is_bevel_mirror = bpy.props.BoolProperty(name="ベベルを左右反転", default=False)
+    bevel_type = bpy.props.EnumProperty(
+        items=_common.get_bevel_enum_items(), name="ベベル", default='Sharp')
 
-    scale = bpy.props.FloatProperty(name="半径", default=0.2, min=0, max=10, soft_min=0, soft_max=10, step=0.1, precision=3)
-    scale_y_multi = bpy.props.IntProperty(name="平たさ", default=50, min=0, max=100, soft_min=0, soft_max=100, subtype='PERCENTAGE')
+    is_bevel_mirror = bpy.props.BoolProperty(
+        name="ベベルを左右反転", default=False)
+
+    scale = bpy.props.FloatProperty(
+        name="半径", default=0.2, min=0, max=10,
+        soft_min=0, soft_max=10, step=0.1, precision=3)
+
+    scale_y_multi = bpy.props.IntProperty(
+        name="平たさ", default=50, min=0, max=100,
+        soft_min=0, soft_max=100, subtype='PERCENTAGE')
 
     @classmethod
     def poll(cls, context):
-        try:
-            for ob in context.selected_objects:
-                if ob.type == 'CURVE':
-                    break
+        for ob in context.selected_objects:
+            if ob.type == 'CURVE':
+                continue
             else:
                 return False
-        except:
-            return False
         return True
 
     def draw(self, context):
@@ -43,7 +49,9 @@ class ahs_maincurve_volume_up(bpy.types.Operator):
 
     def execute(self, context):
         # すでにテーパーかベベルとして指定されているオブジェクトをリスト
-        taper_and_bevel_objects = [c.taper_object for c in context.blend_data.curves] + [c.bevel_object for c in context.blend_data.curves]
+        taper_and_bevel_objects = (
+            [c.taper_object for c in context.blend_data.curves]
+            + [c.bevel_object for c in context.blend_data.curves])
 
         blend_path = _common.get_append_data_blend_path()
 
@@ -60,12 +68,14 @@ class ahs_maincurve_volume_up(bpy.types.Operator):
                 if len([c.taper_object for c in context.blend_data.curves if c.taper_object == curve.taper_object]) == 1:
                     c = curve.taper_object
                     if c:
-                        context.blend_data.curves.remove(bpy.data.curves[c.name], do_unlink=True)
+                        context.blend_data.curves.remove(
+                            bpy.data.curves[c.name], do_unlink=True)
             if curve.bevel_object:
                 if len([c.bevel_object for c in context.blend_data.curves if c.bevel_object == curve.bevel_object]) == 1:
                     c = curve.bevel_object
                     if c:
-                        context.blend_data.curves.remove(bpy.data.curves[c.name], do_unlink=True)
+                        context.blend_data.curves.remove(
+                            bpy.data.curves[c.name], do_unlink=True)
 
             if hasattr(curve, "bevel_mode"):
                 curve.bevel_mode = "OBJECT"
@@ -80,6 +90,8 @@ class ahs_maincurve_volume_up(bpy.types.Operator):
             _common.link_to_scene(taper_curve_ob)
             _common.select(taper_curve_ob, False)
             curve.taper_object = taper_curve_ob
+            # add bevel_mode
+            curve.bevel_mode = "OBJECT"
 
             # ベベルオブジェクトをアペンドして割り当て
             with context.blend_data.libraries.load(blend_path) as (data_from, data_to):
@@ -104,6 +116,7 @@ class ahs_maincurve_volume_up(bpy.types.Operator):
 
             # 拡縮変更
             taper_curve_ob.scale = (self.scale, self.scale, self.scale)
-            bevel_curve_ob.scale = (self.scale, self.scale * self.scale_y_multi * 0.01, self.scale)
+            bevel_curve_ob.scale = (
+                self.scale, self.scale * self.scale_y_multi * 0.01, self.scale)
 
         return {'FINISHED'}
