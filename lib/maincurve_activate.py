@@ -32,7 +32,7 @@ class ahs_maincurve_activate(bpy.types.Operator):
                 parent_objects.append(o)
 
         for o in context.blend_data.objects:
-            o.select_set(False)
+            _common.select(o, False)
 
         def get_center(ob):
             total_co = mathutils.Vector()

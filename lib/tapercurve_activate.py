@@ -42,7 +42,7 @@ class ahs_tapercurve_activate(bpy.types.Operator):
                 return {'CANCELLED'}
 
             for o in context.blend_data.objects:
-                o.select_set(False)
+                _common.select(o, False)
             _common.select(target_ob, True)
             _common.set_hide(target_ob, False)
             _common.set_active_object(target_ob)
